@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Premium Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+        
+        .total-row {
+            border-top: 2px solid #333;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Insurance Premium Calculator</h1>
+        
+        <div class="form-group">
+            <label for="initialPremium">Initial Monthly Premium (RM)</label>
+            <input type="number" id="initialPremium" value="200" step="0.01">
+        </div>
+        
+        <div class="form-group">
+            <label for="increaseType">Premium Increase Type</label>
+            <select id="increaseType" onchange="toggleIncrease()">
+                <option value="fixed">Fixed Annual Increase (RM)</option>
+                <option value="percentage">Percentage Increase (%)</option>
+                <option value="none">No Annual Increase</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="increaseGroup">
+            <label for="increaseAmount" id="increaseLabel">Annual Increase (RM)</label>
+            <input type="number" id="increaseAmount" value="26.67" step="0.01">
+        </div>
+        
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate">
+        </div>
+        
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate">
+        </div>
+        
+        <button onclick="calculate()">Calculate Total Payment</button>
+        
+        <div id="results" class="results">
+            <div class="result-row">
+                <span>Policy Duration:</span>
+                <span id="duration"></span>
+            </div>
+            <div class="result-row">
+                <span>Starting Premium:</span>
+                <span id="startPremium"></span>
+            </div>
+            <div class="result-row">
+                <span>Final Premium:</span>
+                <span id="finalPremium"></span>
+            </div>
+            <div class="result-row">
+                <span>Average Premium:</span>
+                <span id="avgPremium"></span>
+            </div>
+            <div class="result-row total-row">
+                <span>TOTAL AMOUNT:</span>
+                <span id="totalAmount"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default dates when page loads
+        window.onload = function() {
+            const today = new Date();
+            const futureDate = new Date();
+            futureDate.setFullYear(today.getFullYear() + 5);
+            
+            document.getElementById('startDate').value = today.toISOString().split('T')[0];
+            document.getElementById('endDate').value = futureDate.toISOString().split('T')[0];
+        };
+
+        function toggleIncrease() {
+            const type = document.getElementById('increaseType').value;
+            const group = document.getElementById('increaseGroup');
+            const label = document.getElementById('increaseLabel');
+            const input = document.getElementById('increaseAmount');
+            
+            if (type === 'none') {
+                group.style.display = 'none';
+            } else {
+                group.style.display = 'block';
+                if (type === 'fixed') {
+                    label.textContent = 'Annual Increase (RM)';
+                    input.value = '26.67';
+                } else {
+                    label.textContent = 'Annual Increase (%)';
+                    input.value = '5';
+                }
+            }
+        }
+
+        function calculate() {
+            const initial = parseFloat(document.getElementById('initialPremium').value);
+            const type = document.getElementById('increaseType').value;
+            const increase = type === 'none' ? 0 : parseFloat(document.getElementById('increaseAmount').value);
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            
+            // Validate inputs
+            if (!initial || initial <= 0) {
+                alert('Please enter a valid initial premium');
+                return;
+            }
+            
+            if (endDate <= startDate) {
+                alert('End date must be after start date');
+                return;
+            }
+            
+            // Calculate months
+            const years = endDate.getFullYear() - startDate.getFullYear();
+            const months = endDate.getMonth() - startDate.getMonth();
+            const totalMonths = years * 12 + months;
+            
+            // Calculate total payment
+            let totalPayment = 0;
+            let finalMonthlyPremium = initial;
+            
+            for (let month = 1; month <= totalMonths; month++) {
+                const currentYear = Math.floor((month - 1) / 12) + 1;
+                let monthlyPremium;
+                
+                if (type === 'none') {
+                    monthlyPremium = initial;
+                } else if (type === 'fixed') {
+                    monthlyPremium = initial + (increase * (currentYear - 1));
+                } else { // percentage
+                    monthlyPremium = initial * Math.pow(1 + increase/100, currentYear - 1);
+                }
+                
+                totalPayment += monthlyPremium;
+                if (month === totalMonths) finalMonthlyPremium = monthlyPremium;
+            }
+            
+            const averagePremium = totalPayment / totalMonths;
+            
+            // Display results
+            document.getElementById('duration').textContent = years + ' years, ' + Math.abs(months) + ' months';
+            document.getElementById('startPremium').textContent = 'RM ' + initial.toFixed(2);
+            document.getElementById('finalPremium').textContent = 'RM ' + finalMonthlyPremium.toFixed(2);
+            document.getElementById('avgPremium').textContent = 'RM ' + averagePremium.toFixed(2);
+            document.getElementById('totalAmount').textContent = 'RM ' + totalPayment.toLocaleString();
+            
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
