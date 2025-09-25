@@ -132,11 +132,11 @@
             <input type="date" id="endDate">
         </div>
         
-        <button onclick="calculate()">Calculate Total Payment</button>
+        <button onclick="calculate()">Calculate Total Amount</button>
         
         <div id="results" class="results">
             <div class="result-row">
-                <span>Policy Duration:</span>
+                <span> Duration:</span>
                 <span id="duration"></span>
             </div>
             <div class="result-row">
@@ -163,6 +163,11 @@
                     <span id="monthlyIncrement"></span>
                 </div>
             </div>
+            
+            <div class="result-row">
+                <span>Yearly Increment Amount:</span>
+                <span id="yearlyIncrement"></span>
+             </div>
             
             <div class="result-row total-row">
                 <span>TOTAL AMOUNT PAID:</span>
@@ -193,7 +198,7 @@
                 group.style.display = 'block';
                 
                 if (type === 'fixed_annual') {
-                    label.textContent = 'Annual Increase (RM)';
+                    label.textContent = 'Annual Increase';
                     input.value = '26.67';
                 } else if (type === 'fixed_monthly') {
                     label.textContent = 'Monthly Increase (RM)';
@@ -257,15 +262,16 @@
             totalIncrementAmount = totalPayment - (initial * totalMonths);
             const monthlyIncrementAmount = totalIncrementAmount / totalMonths;
             const averagePremium = totalPayment / totalMonths;
+            const yearlyIncrementAmount = totalIncrementAmount / years;
             
             document.getElementById('duration').textContent = years + ' years, ' + Math.abs(months) + ' months';
-            document.getElementById('startPremium').textContent = 'RM ' + initial.toFixed(2);
-            document.getElementById('finalPremium').textContent = 'RM ' + finalMonthlyPremium.toFixed(2);
-            document.getElementById('avgPremium').textContent = 'RM ' + averagePremium.toFixed(2);
-            document.getElementById('totalAmount').textContent = 'RM ' + totalPayment.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('totalIncrement').textContent = 'RM ' + totalIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('monthlyIncrement').textContent = 'RM ' + monthlyIncrementAmount.toFixed(2);
-            
+            document.getElementById('startPremium').textContent = ' ' + initial.toFixed(2);
+            document.getElementById('finalPremium').textContent = '' + finalMonthlyPremium.toFixed(2);
+            document.getElementById('avgPremium').textContent = '' + averagePremium.toFixed(2);
+            document.getElementById('totalAmount').textContent = '' + totalPayment.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('totalIncrement').textContent = '' + totalIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('monthlyIncrement').textContent = '' + monthlyIncrementAmount.toFixed(2);
+            document.getElementById('yearlyIncrement').textContent = '' + yearlyIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
             document.getElementById('results').style.display = 'block';
         }
     </script>
