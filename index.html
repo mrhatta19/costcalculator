@@ -85,15 +85,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Insurance Premium Calculator</h1>
+        <h1>Cost Calculator</h1>
         
         <div class="form-group">
-            <label for="initialPremium">Initial Monthly Premium (RM)</label>
+            <label for="initialPremium">Initial Monthly</label>
             <input type="number" id="initialPremium" value="200" step="0.01">
         </div>
         
         <div class="form-group">
-            <label for="increaseType">Premium Increase Type</label>
+            <label for="increaseType"> Increase Type</label>
             <select id="increaseType" onchange="toggleIncrease()">
                 <option value="fixed">Fixed Annual Increase (RM)</option>
                 <option value="percentage">Percentage Increase (%)</option>
@@ -103,7 +103,7 @@
         
         <div class="form-group" id="increaseGroup">
             <label for="increaseAmount" id="increaseLabel">Annual Increase (RM)</label>
-            <input type="number" id="increaseAmount" value="26.67" step="0.01">
+            <input type="number" id="increaseAmount" value="0.00" step="0.01">
         </div>
         
         <div class="form-group">
@@ -128,15 +128,15 @@
                 <span id="startPremium"></span>
             </div>
             <div class="result-row">
-                <span>Final Premium:</span>
+                <span>Final :</span>
                 <span id="finalPremium"></span>
             </div>
             <div class="result-row">
-                <span>Average Premium:</span>
+                <span>Average :</span>
                 <span id="avgPremium"></span>
             </div>
             <div class="result-row total-row">
-                <span>TOTAL AMOUNT:</span>
+                <span>TOTAL AMOUNT :</span>
                 <span id="totalAmount"></span>
             </div>
         </div>
