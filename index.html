@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saving Cost Calculator</title>
+    <title>Insurance Premium Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -80,30 +80,46 @@
             font-weight: bold;
             font-size: 1.2em;
             color: #007bff;
+            margin-top: 15px;
+            padding-top: 10px;
+        }
+        
+        .increment-section {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        
+        .increment-section h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Cost Calculator</h1>
+        <h1>Saving and Living Cost Calculator</h1>
         
         <div class="form-group">
-            <label for="initialPremium">Initial Monthly</label>
+            <label for="initialPremium">Initial Monthly (Amount)</label>
             <input type="number" id="initialPremium" value="200" step="0.01">
         </div>
         
         <div class="form-group">
             <label for="increaseType"> Increase Type</label>
             <select id="increaseType" onchange="toggleIncrease()">
-                <option value="fixed">Fixed Annual Increase Amount</option>
-                <option value="percentage">Percentage Increase (%)</option>
-                <option value="none">No Annual Increase</option>
+                <option value="fixed_annual">Fixed Annual Increase (Amount)</option>
+                <option value="fixed_monthly">Fixed Monthly Increase (Amount)</option>
+                <option value="percentage_annual">Percentage Annual Increase (%)</option>
+                <option value="percentage_monthly">Percentage Monthly Increase (%)</option>
+                <option value="none">No Increase</option>
             </select>
         </div>
         
         <div class="form-group" id="increaseGroup">
-            <label for="increaseAmount" id="increaseLabel">Annual Increase Amount</label>
-            <input type="number" id="increaseAmount" value="0.00" step="0.01">
+            <label for="increaseAmount" id="increaseLabel">Annual Increase (Amount)</label>
+            <input type="number" id="increaseAmount" value="26.67" step="0.01">
         </div>
         
         <div class="form-group">
@@ -120,7 +136,7 @@
         
         <div id="results" class="results">
             <div class="result-row">
-                <span> Duration:</span>
+                <span>Policy Duration:</span>
                 <span id="duration"></span>
             </div>
             <div class="result-row">
@@ -128,22 +144,34 @@
                 <span id="startPremium"></span>
             </div>
             <div class="result-row">
-                <span>Final Amount :</span>
+                <span>Final Amount:</span>
                 <span id="finalPremium"></span>
             </div>
             <div class="result-row">
-                <span>Average Amount :</span>
+                <span>Average Amount:</span>
                 <span id="avgPremium"></span>
             </div>
+            
+            <div class="increment-section">
+                <h4>Increment Details:</h4>
+                <div class="result-row">
+                    <span>Total Increment Amount:</span>
+                    <span id="totalIncrement"></span>
+                </div>
+                <div class="result-row">
+                    <span>Monthly Increment Amount:</span>
+                    <span id="monthlyIncrement"></span>
+                </div>
+            </div>
+            
             <div class="result-row total-row">
-                <span>TOTAL AMOUNT :</span>
+                <span>TOTAL AMOUNT PAID:</span>
                 <span id="totalAmount"></span>
             </div>
         </div>
     </div>
 
     <script>
-        // Set default dates when page loads
         window.onload = function() {
             const today = new Date();
             const futureDate = new Date();
@@ -163,12 +191,19 @@
                 group.style.display = 'none';
             } else {
                 group.style.display = 'block';
-                if (type === 'fixed') {
+                
+                if (type === 'fixed_annual') {
                     label.textContent = 'Annual Increase (RM)';
                     input.value = '26.67';
-                } else {
+                } else if (type === 'fixed_monthly') {
+                    label.textContent = 'Monthly Increase (RM)';
+                    input.value = '2.22';
+                } else if (type === 'percentage_annual') {
                     label.textContent = 'Annual Increase (%)';
                     input.value = '5';
+                } else if (type === 'percentage_monthly') {
+                    label.textContent = 'Monthly Increase (%)';
+                    input.value = '0.4';
                 }
             }
         }
@@ -180,7 +215,6 @@
             const startDate = new Date(document.getElementById('startDate').value);
             const endDate = new Date(document.getElementById('endDate').value);
             
-            // Validate inputs
             if (!initial || initial <= 0) {
                 alert('Please enter a valid initial premium');
                 return;
@@ -191,39 +225,46 @@
                 return;
             }
             
-            // Calculate months
             const years = endDate.getFullYear() - startDate.getFullYear();
             const months = endDate.getMonth() - startDate.getMonth();
             const totalMonths = years * 12 + months;
             
-            // Calculate total payment
             let totalPayment = 0;
             let finalMonthlyPremium = initial;
+            let totalIncrementAmount = 0;
             
             for (let month = 1; month <= totalMonths; month++) {
-                const currentYear = Math.floor((month - 1) / 12) + 1;
                 let monthlyPremium;
                 
                 if (type === 'none') {
                     monthlyPremium = initial;
-                } else if (type === 'fixed') {
+                } else if (type === 'fixed_annual') {
+                    const currentYear = Math.floor((month - 1) / 12) + 1;
                     monthlyPremium = initial + (increase * (currentYear - 1));
-                } else { // percentage
+                } else if (type === 'fixed_monthly') {
+                    monthlyPremium = initial + (increase * (month - 1));
+                } else if (type === 'percentage_annual') {
+                    const currentYear = Math.floor((month - 1) / 12) + 1;
                     monthlyPremium = initial * Math.pow(1 + increase/100, currentYear - 1);
+                } else if (type === 'percentage_monthly') {
+                    monthlyPremium = initial * Math.pow(1 + increase/100, month - 1);
                 }
                 
                 totalPayment += monthlyPremium;
                 if (month === totalMonths) finalMonthlyPremium = monthlyPremium;
             }
             
+            totalIncrementAmount = totalPayment - (initial * totalMonths);
+            const monthlyIncrementAmount = totalIncrementAmount / totalMonths;
             const averagePremium = totalPayment / totalMonths;
             
-            // Display results
             document.getElementById('duration').textContent = years + ' years, ' + Math.abs(months) + ' months';
             document.getElementById('startPremium').textContent = 'RM ' + initial.toFixed(2);
             document.getElementById('finalPremium').textContent = 'RM ' + finalMonthlyPremium.toFixed(2);
             document.getElementById('avgPremium').textContent = 'RM ' + averagePremium.toFixed(2);
-            document.getElementById('totalAmount').textContent = 'RM ' + totalPayment.toLocaleString();
+            document.getElementById('totalAmount').textContent = 'RM ' + totalPayment.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('totalIncrement').textContent = 'RM ' + totalIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('monthlyIncrement').textContent = 'RM ' + monthlyIncrementAmount.toFixed(2);
             
             document.getElementById('results').style.display = 'block';
         }
