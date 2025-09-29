@@ -107,7 +107,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Calculator</h1>
+        <h1>Cost Calculator</h1>
         
         <div class="form-group">
             <label for="initialPremium">Initial Monthly </label>
@@ -142,22 +142,26 @@
         
         <button onclick="calculate()">Calculate Total Payment</button>
         
-        <div id="results" class="results">
-         <!--   <div class="debug-section">
+<!--        <div id="results" class="results">
+            <div class="debug-section">
                 <h4>Calculation Debug:</h4>
-                <div class="result-row">
-                    <span>Total Months Calculated:</span>
-                    <span id="debugMonths"></span>
-                </div>
-                <div class="result-row">
-                    <span>Actual Days:</span>
-                    <span id="debugDays"></span>
+               
+                
                 </div>
                 <div class="result-row">
                     <span>Calculation Details:</span>
                     <span id="apCheck"></span>
-                </div> -->
+                </div> 
             </div>
+             
+            <div class="result-row">
+                    <span>Total Months Calculated:</span>
+                    <span id="debugMonths"></span>
+                </div>-->
+
+            <div class="result-row">
+                    <span>Actual Days:</span>
+                    <span id="debugDays"></span>
             
             <div class="result-row">
                 <span>Policy Duration:</span>
@@ -361,16 +365,16 @@
             // Debug information
             document.getElementById('debugMonths').textContent = totalMonths + ' months';
             document.getElementById('debugDays').textContent = totalDays + ' days';
-            document.getElementById('apCheck').textContent = apCheck;
+           //document.getElementById('apCheck').textContent = apCheck;
             
             document.getElementById('duration').textContent = displayYears + ' years, ' + displayMonths + ' months';
-            document.getElementById('startPremium').textContent = 'RM ' + initial.toFixed(2);
-            document.getElementById('finalPremium').textContent = 'RM ' + finalMonthlyPremium.toFixed(2);
-            document.getElementById('avgPremium').textContent = 'RM ' + averagePremium.toFixed(2);
-            document.getElementById('totalAmount').textContent = 'RM ' + totalPayment.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('totalIncrement').textContent = 'RM ' + totalIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('yearlyIncrement').textContent = 'RM ' + yearlyIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('monthlyIncrement').textContent = 'RM ' + monthlyIncrementAmount.toFixed(2);
+            document.getElementById('startPremium').textContent = '' + initial.toFixed(2);
+            document.getElementById('finalPremium').textContent = '' + finalMonthlyPremium.toFixed(2);
+            document.getElementById('avgPremium').textContent = '' + averagePremium.toFixed(2);
+            document.getElementById('totalAmount').textContent = '' + totalPayment.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('totalIncrement').textContent = '' + totalIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('yearlyIncrement').textContent = '' + yearlyIncrementAmount.toLocaleString('en-MY', {minimumFractionDigits: 2});
+            document.getElementById('monthlyIncrement').textContent = '' + monthlyIncrementAmount.toFixed(2);
             
             document.getElementById('results').style.display = 'block';
         }
